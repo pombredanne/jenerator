@@ -1,0 +1,16 @@
+# Installation
+
+First, make sure the Python 3 version of the following packages are installed:
+
+  * markdown
+  * jinja2
+
+On a Debian-derived system this can be accomplished with:
+
+    $ sudo apt-get install python3-jinja2 python3-markdown
+
+Then issue the following:
+
+    $ sudo ./setup.py install
+
+You can (obviously) also install it in a virtualenv (which I recommend).
