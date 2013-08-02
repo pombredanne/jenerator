@@ -147,7 +147,8 @@ def cmd_build(opts):
     global_context = {
             'cat_pages': {},
             'categories': [],
-            'all_cat_names': set()
+            'all_cat_names': set(),
+            'all_pages': []
     }
     # Build pages
     for root, dirs, files in os.walk(os.path.join(opts.source, PAGESDIR)):
@@ -167,6 +168,8 @@ def cmd_build(opts):
             global_context['all_cat_names'].update(context['cat_names'])
             for c in context['cat_names']:
                 global_context['cat_pages'].setdefault(c, []).append(context)
+            # Add page to global pages list
+            global_context['all_pages'].append(context)
             # Add page to queue
             buildq.append(('page', context))
     # Build category pages
