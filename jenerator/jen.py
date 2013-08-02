@@ -15,6 +15,7 @@ TMPLSDIR = 'templates'
 PAGETMPL = 'page' + os.extsep + 'html'
 CATTMPL = 'category' + os.extsep + 'html'
 INDTMPL = 'index' + os.extsep + 'html'
+DEFAULTTMPL = 'default' + os.extsep + 'html'
 
 DATEINDEX = -2
 TITLEINDEX = -1
@@ -141,14 +142,16 @@ def cmd_build(opts):
     template_environment = Environment(
             loader=FileSystemLoader(os.path.join(opts.source, TMPLSDIR)))
 
-    # Establish the build queue - elements are (type, context)
+    # Establish the build queue - stores contexts to be built
     buildq = []
 
+    # Global context is integrated with the context for each page to provide
+    # info about other pages and categories that exist in the site
     global_context = {
-            'cat_pages': {},
-            'categories': [],
-            'all_cat_names': set(),
-            'all_pages': []
+            'cat_pages': {}, # category -> pages in that category
+            'categories': [], # category contexts
+            'all_cat_names': set(), # category names as strings
+            'all_pages': [] # page contexts
     }
     # Build pages
     for root, dirs, files in os.walk(os.path.join(opts.source, PAGESDIR)):
@@ -163,15 +166,25 @@ def cmd_build(opts):
             if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
                     tmpl_path)):
                 tmpl_path = PAGETMPL
+            if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+                    tmpl_path)):
+                tmpl_path = DEFAULTTMPL
+            if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+                    tmpl_path)):
+                # TODO: Grab default template from /data instead of failing
+                sys.stderr.write('Error: No default template defined\n')
+                sys.exit(1)
             context['tmpl_path'] = tmpl_path
             # Add page to global categories
             global_context['all_cat_names'].update(context['cat_names'])
             for c in context['cat_names']:
                 global_context['cat_pages'].setdefault(c, []).append(context)
+            # Set page type
+            context['type'] = 'page'
+            # Add page to queue
+            buildq.append(context)
             # Add page to global pages list
             global_context['all_pages'].append(context)
-            # Add page to queue
-            buildq.append(('page', context))
     # Build category pages
     for category in global_context['all_cat_names']:
         context = parse_category(os.path.join(opts.source, CATSDIR),
@@ -185,9 +198,19 @@ def cmd_build(opts):
         if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
                 tmpl_path)):
             tmpl_path = CATTMPL
+        if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+                tmpl_path)):
+            tmpl_path = DEFAULTTMPL
+        if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+                tmpl_path)):
+            # TODO: Grab default template from /data instead of failing
+            sys.stderr.write('Error: No default template defined\n')
+            sys.exit(1)
         context['tmpl_path'] = tmpl_path
+        # Set page type
+        context['type'] = 'category'
         # Add category page to queue
-        buildq.append(('category', context))
+        buildq.append(context)
         # Add the category context to the global list
         global_context['categories'].append(context)
     # Build index page
@@ -196,12 +219,23 @@ def cmd_build(opts):
     context['img_path'] = util_image_ext(os.path.join(opts.source,
             PICSDIR, 'index'))
     # Add template
-    context['tmpl_path'] = INDTMPL
+    tmpl_path = INDTMPL
+    if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+            tmpl_path)):
+        tmpl_path = DEFAULTTMPL
+    if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+            tmpl_path)):
+        # TODO: Grab default template from /data instead of failing
+        sys.stderr.write('Error: No default template defined\n')
+        sys.exit(1)
+    context['tmpl_path'] = tmpl_path
+    # Set page type
+    context['type'] = 'index'
     # Add to queue
-    buildq.append(('index', context))
+    buildq.append(context)
 
 
-    for t, c in buildq:
+    for c in buildq:
         final_context = {}
         final_context.update(c)
         final_context.update(global_context)
