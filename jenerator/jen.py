@@ -104,6 +104,8 @@ def cmd_init(opts):
     os.makedirs(os.path.join(base, PAGESDIR))
     os.makedirs(os.path.join(base, CATSDIR))
     os.makedirs(os.path.join(base, TMPLSDIR))
+    os.makedirs(os.path.join(base, TMPLSDIR, PAGESDIR))
+    os.makedirs(os.path.join(base, TMPLSDIR, CATSDIR))
     os.makedirs(os.path.join(base, PICSDIR))
     os.makedirs(os.path.join(base, PICSDIR, PAGESDIR))
     os.makedirs(os.path.join(base, PICSDIR, CATSDIR))
