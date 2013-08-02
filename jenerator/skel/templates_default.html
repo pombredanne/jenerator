@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>New Jenerator Site</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <style type="text/css" media="screen">
+        body {
+            background-color: #333;
+            padding: 1.5em 0;
+            color: #333;
+            font-family: sans-serif;
+        }
+        h1 a {
+            text-decoration: none;
+            color: #333;
+        }
+        #menu ul {
+            padding: 0;
+            list-style-type: none;
+            
+        }
+        #menu li {
+            display: inline-block;
+            padding: 0.5em 1.5em;
+            background-color: #666;
+            margin-right: 0.125em;
+        }
+        #menu a {
+            text-decoration: none;
+            color: #fff;
+        }
+        #container {
+            margin: auto;
+            max-width: 40.0em;
+            background-color: #fff;
+            padding: 1.5em 3.0em;
+        }
+        #footer {
+            border-top: 1px solid #ccc;
+    </style>
+<head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1><a href="#">Jenerator Site</a></h1>
+        </div>
+
+        <div id="menu" class="{% block menu_type %}small-menu{% endblock %}">
+            <ul>
+                <li class="home-link"><a href="index.html">Home</a></li>
+                {% for c in categories %}
+                <li><a href="{{ c.raw_title }}.html">{{ c.nice_title|capitalize }}</a></li>
+                {% endfor %}
+                {% block menu %}
+                {% endblock %}
+            </ul>
+        </div>
+
+        <div id="content">
+            <div class="content-item">
+                {% block title %}
+                {% endblock %}
+
+                {% block content_meta_top %}
+                {% endblock %}
+
+                {{ html_content }}
+
+                {% if type == 'category' %}
+                <ul>
+                    {% for c in cat_pages[raw_title] %}
+                    <li><a href="{{ c.raw_title }}.html">{{ c.nice_title|capitalize }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if type == 'index' %}
+                <ul>
+                    {% for c in cat_pages[raw_title] %}
+                    <li><a href="{{ c.raw_title }}.html">{{ c.nice_title|capitalize }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+
+        <div id="footer">
+            <p><small>Built with Jenerator!</small></p>
+        </div>
+    </div>
+</body>
+</html>

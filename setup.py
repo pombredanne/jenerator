@@ -12,6 +12,7 @@ setup(
         author_email='george@lesica.com',
         url='http://www.github.com/glesica/jenerator',
         packages=['jenerator'],
+        package_data={'jenerator': ['skel/*']},
         requires=['markdown','jinja2'],
         scripts=['scripts/jen']
 )

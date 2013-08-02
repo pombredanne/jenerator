@@ -8,4 +8,19 @@ simple directory of text files.
 
 ## Getting Started
 
-TODO
+Jenerator was designed to be easy to use, but still reasonably flexible. To set
+up a simple skeleton site:
+
+    $ mkdir mysite
+    $ jen init
+
+That's it. A default template is configured during initialization, and you
+probably want to change it, but you are pretty much ready to go at this point.
+Now you can start putting Markdown files in the `pages` subdirectory.  Once you
+have some content and you want to build the site for publishing:
+
+    $ jen build
+
+This will cause a directory called `_build` to be created. This directory will
+contain everything that needs to be published, just move the contents somewhere
+useful.

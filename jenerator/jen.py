@@ -1,4 +1,4 @@
-import sys, os, shutil
+import sys, os, shutil, pkgutil
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
 
@@ -110,7 +110,13 @@ def cmd_init(opts):
     os.makedirs(os.path.join(base, PICSDIR))
     os.makedirs(os.path.join(base, PICSDIR, PAGESDIR))
     os.makedirs(os.path.join(base, PICSDIR, CATSDIR))
-    open(os.path.join(base, 'index.md'), 'w').write('# Index')
+    # Load files
+    tmpl_data = pkgutil.get_data('jenerator',
+            'skel/templates_default.html')
+    open(os.path.join(base, TMPLSDIR, 'default.html'), 'wb').write(tmpl_data)
+    ind_data = pkgutil.get_data('jenerator',
+            'skel/index.md')
+    open(os.path.join(base, 'index.md'), 'wb').write(ind_data)
 
 
 def cmd_build(opts):
