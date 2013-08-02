@@ -92,6 +92,24 @@ def parse_category(path, name):
     return context
 
 
+def cmd_init(opts):
+    """
+    Set up a proper directory structure.
+
+    :param opts: Configuration options
+    :type opts: NamedTuple-like object
+    """
+    base = opts.location
+    os.makedirs(os.path.join(base, STATICDIR))
+    os.makedirs(os.path.join(base, PAGESDIR))
+    os.makedirs(os.path.join(base, CATSDIR))
+    os.makedirs(os.path.join(base, TMPLSDIR))
+    os.makedirs(os.path.join(base, PICSDIR))
+    os.makedirs(os.path.join(base, PICSDIR, PAGESDIR))
+    os.makedirs(os.path.join(base, PICSDIR, CATSDIR))
+    open(os.path.join(base, 'index.md'), 'w').write('# Index')
+
+
 def cmd_build(opts):
     """
     Build a site.
@@ -107,7 +125,11 @@ def cmd_build(opts):
             sys.exit(1)
         else:
             shutil.rmtree(opts.target)
-    shutil.copytree(os.path.join(opts.source, STATICDIR), opts.target)
+
+    if opts.nostatic:
+        os.makedirs(opts.target)
+    else:
+        shutil.copytree(os.path.join(opts.source, STATICDIR), opts.target)
 
     # Copy the pictures directory
     shutil.copytree(os.path.join(opts.source, PICSDIR),

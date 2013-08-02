@@ -7,6 +7,12 @@ import jenerator
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A static site generator')
     subparsers = parser.add_subparsers(description='Valid subcommands')
+    # Init command
+    parser_init = subparsers.add_parser('init', aliases=['i'],
+            help='Initialize a new site directory structure (optional)')
+    parser_init.add_argument('--location', '-l', type=str, default='.',
+            help='Path to site root directory')
+    parser_init.set_defaults(func=jenerator.cmd_init)
     # Build command
     parser_build = subparsers.add_parser('build', aliases=['b'],
             help='Build a site')
@@ -16,6 +22,8 @@ if __name__ == '__main__':
             help='Directory to store output files')
     parser_build.add_argument('--overwrite', action='store_true', default=False,
             help='Delete the build target directory before building')
+    parser_build.add_argument('--nostatic', action='store_true', default=False,
+            help='Do not require a static files directory')
     parser_build.set_defaults(func=jenerator.cmd_build)
 
     opts = parser.parse_args(sys.argv[1:])
