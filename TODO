@@ -4,3 +4,4 @@ x Build default skeleton site with default template
     Optionally have site title and author name auto-fill on init
 Option to daemonize the build command to watch source and build automagically
 Option to do a make-like efficient build by checking timestamps on files
+Multiple picture includes by appending numbers to the file names
