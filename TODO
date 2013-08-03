@@ -5,3 +5,4 @@ x Build default skeleton site with default template
 Option to daemonize the build command to watch source and build automagically
 Option to do a make-like efficient build by checking timestamps on files
 Multiple picture includes by appending numbers to the file names
+Strip special characters from file names and link text
