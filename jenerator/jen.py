@@ -59,6 +59,7 @@ def parse_page(path, name):
     raw_date = util_parse_date(name)
     raw_title = util_parse_title(name)
     nice_title = ' '.join(raw_title.split('_'))
+    link = '-'.join(raw_title.lower().split('_'))
     category_names = util_parse_categories(name)
     context = {
             'raw_content': raw_content,
@@ -66,7 +67,8 @@ def parse_page(path, name):
             'raw_date': raw_date,
             'raw_title': raw_title,
             'nice_title': nice_title,
-            'cat_names': category_names
+            'cat_names': category_names,
+            'link': link 
     }
     return context
 
@@ -83,12 +85,14 @@ def parse_category(path, name):
     raw_date = ''
     raw_title = name
     nice_title = ' '.join(raw_title.split('_'))
+    link = '-'.join(raw_title.lower().split('_'))
     context = {
             'raw_content': raw_content,
             'html_content': html_content,
             'raw_date': raw_date,
             'raw_title': raw_title,
             'nice_title': nice_title,
+            'link': link 
     }
     return context
 
@@ -249,5 +253,5 @@ def cmd_build(opts):
                 c['tmpl_path'])
         content = template.render(**final_context)
         with open(os.path.join(opts.target,
-                c['raw_title'].lower() + os.path.extsep + 'html'), 'w') as f:
+                c['link'] + os.path.extsep + 'html'), 'w') as f:
             f.write(content)
