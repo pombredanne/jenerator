@@ -6,6 +6,8 @@ from jenerator.processors import process
 METASEP = '__'
 DATEFMT = '%Y-%m-%d'
 IMGEXTS = ['jpg', 'png']
+SAFECHARS = 'abcdefghijklmnopqrstuvwxyz0123456789.-_'
+ALTCHAR = '-'
 
 STATICDIR = 'static'
 PAGESDIR = 'pages'
@@ -19,6 +21,19 @@ DEFAULTTMPL = 'default' + os.extsep + 'html'
 
 DATEINDEX = -2
 TITLEINDEX = -1
+
+
+def util_strip_chars(s):
+    """
+    Return a copy of the given string with only safe characters. Unsafe
+    characters are converted to a particular alternate character given by
+    'ALTCHAR'.
+    """
+    outstr = s
+    for c in s:
+        if c not in SAFECHARS:
+            outstr = outstr.replace(c, ALTCHAR)
+    return outstr
 
 
 def util_parse_categories(name):
@@ -57,7 +72,7 @@ def parse_page(path, name):
     raw_date = util_parse_date(name)
     raw_title = util_parse_title(name)
     nice_title = ' '.join(raw_title.split('_'))
-    link = '-'.join(raw_title.lower().split('_'))
+    link = util_strip_chars('-'.join(raw_title.lower().split('_')))
     category_names = util_parse_categories(name)
     context = {
             'raw_content': raw_content,
@@ -82,7 +97,7 @@ def parse_category(path, name):
     raw_date = ''
     raw_title = name
     nice_title = ' '.join(raw_title.split('_'))
-    link = '-'.join(raw_title.lower().split('_'))
+    link = util_strip_chars('-'.join(raw_title.lower().split('_')))
     context = {
             'raw_content': raw_content,
             'html_content': html_content,
