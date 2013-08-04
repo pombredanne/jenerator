@@ -1,6 +1,6 @@
 import sys, os, shutil, pkgutil
 from jinja2 import Environment, FileSystemLoader
-from markdown import markdown
+from jenerator.processors import process
 
 
 METASEP = '__'
@@ -53,9 +53,7 @@ def util_image_ext(basename):
 
 
 def parse_page(path, name):
-    with open(os.path.join(path, name), 'r') as f:
-        raw_content = ''.join(f.readlines())
-    html_content = markdown(raw_content)
+    raw_content, html_content = process(os.path.join(path, name))
     raw_date = util_parse_date(name)
     raw_title = util_parse_title(name)
     nice_title = ' '.join(raw_title.split('_'))
@@ -77,11 +75,10 @@ def parse_category(path, name):
     full_path = os.path.join(path,
             name + os.extsep + 'md')
     if os.path.isfile(full_path):
-        with open(full_path, 'r') as f:
-            raw_content = ''.join(f.readlines())
+        raw_content, html_content = process(full_path)
     else:
         raw_content = ''
-    html_content = markdown(raw_content)
+        html_content = ''
     raw_date = ''
     raw_title = name
     nice_title = ' '.join(raw_title.split('_'))
