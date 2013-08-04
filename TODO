@@ -1,4 +1,4 @@
-Allow more input file formats inside pages (rst, txt, html for starters)
+x Allow more input file formats inside pages (rst, txt, html for starters)
 Automatically detect input format and use appropriate compiler
 x Build default skeleton site with default template
     Optionally have site title and author name auto-fill on init

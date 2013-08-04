@@ -13,6 +13,7 @@ MDEXTS = ('md', 'markdown')
 RSTEXTS = ('rst',)
 CSVEXTS = ('csv', 'tsv')
 TXTEXTS = ('txt',)
+HTMLEXTS = ('html', 'htm')
 
 
 def process_md(path):
@@ -58,6 +59,12 @@ def process_txt(path):
     return raw, content
 
 
+def process_html(path):
+    with open(path, 'r') as f:
+        raw = ''.join(f.readlines())
+    return raw, raw
+
+
 def process(path):
     ext = os.path.splitext(path)[1][1:]
     if ext in MDEXTS:
@@ -68,3 +75,5 @@ def process(path):
         return process_csv(path)
     if ext in TXTEXTS:
         return process_txt(path)
+    if ext in HTMLEXTS:
+        return process_html(path)
