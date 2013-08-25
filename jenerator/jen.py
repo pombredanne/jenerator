@@ -1,4 +1,4 @@
-import sys, os, shutil, pkgutil
+import sys, os, shutil, pkgutil, json
 from jinja2 import Environment, FileSystemLoader
 from jenerator.processors import process
 
@@ -14,6 +14,9 @@ PAGESDIR = 'pages'
 PICSDIR = 'pictures'
 CATSDIR = 'categories'
 TMPLSDIR = 'templates'
+CONFIGDIR = '.jenerator'
+CONFIGFILE = 'config'
+
 PAGETMPL = 'page' + os.extsep + 'html'
 CATTMPL = 'category' + os.extsep + 'html'
 INDTMPL = 'index' + os.extsep + 'html'
@@ -109,6 +112,42 @@ def parse_category(path, name):
     return context
 
 
+def config_set(opts, option, value=''):
+    """
+    Set a configuration option for a site.
+    """
+    if 'location' in opts:
+        site_path = opts.location
+    elif 'site' in opts:
+        site_path = opts.site
+    else:
+        raise Exception('No site specified, cannot set options')
+    with open(os.path.join(site_path, CONFIGDIR, CONFIGFILE), 'r') as f:
+        config_data = json.load(f)
+    config_data[option] = value
+    with open(os.path.join(site_path, CONFIGDIR, CONFIGFILE), 'w') as f:
+        json.dump(config_data, f)
+
+
+def config_getall(opts):
+    if 'location' in opts:
+        site_path = opts.location
+    elif 'site' in opts:
+        site_path = opts.site
+    else:
+        raise Exception('No site specified, cannot set options')
+    with open(os.path.join(site_path, CONFIGDIR, CONFIGFILE), 'r') as f:
+        config_data = json.load(f)
+    return config_data
+
+
+def config_get(opts, option):
+    """
+    Get the value of a configuration option for a site.
+    """
+    return config_getall(opts).get(option, '')
+
+
 def cmd_init(opts):
     """
     Set up a proper directory structure.
@@ -133,6 +172,30 @@ def cmd_init(opts):
     ind_data = pkgutil.get_data('jenerator',
             'skel/index.md')
     open(os.path.join(base, 'index.md'), 'wb').write(ind_data)
+    # Create meta directory
+    os.makedirs(os.path.join(base, CONFIGDIR))
+    with open(os.path.join(base, CONFIGDIR, CONFIGFILE), 'w') as f:
+        f.write('{}')
+    config_set(opts, 'author_name', opts.author)
+    config_set(opts, 'author_email', opts.email)
+    config_set(opts, 'site_title', opts.title)
+
+
+def cmd_config(opts):
+    """
+    Configure a site.
+    """
+    if opts.set:
+        # Parse option and value
+        option, value = opts.set.split('=', 1)
+        config_set(opts, option, value)
+    elif opts.option:
+        value = config_get(opts, opts.option)
+        sys.stdout.write('{}={}\n'.format(
+                opts.option, value))
+    else:
+        # TODO: Display all options and values?
+        pass
 
 
 def cmd_build(opts):
@@ -256,9 +319,10 @@ def cmd_build(opts):
     # Add to queue
     buildq.append(context)
 
-
+    config_context = config_getall(opts)
     for c in buildq:
         final_context = {}
+        final_context.update(config_context)
         final_context.update(c)
         final_context.update(global_context)
         template = template_environment.get_template(

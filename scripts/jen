@@ -12,7 +12,25 @@ if __name__ == '__main__':
             help='Initialize a new site directory structure (optional)')
     parser_init.add_argument('--location', '-l', type=str, default='.',
             help='Path to site root directory')
+    parser_init.add_argument('--title', type=str, default='',
+            help='Site title')
+    parser_init.add_argument('--author', type=str, default='',
+            help='Site author name')
+    parser_init.add_argument('--email', type=str, default='',
+            help='Author email address')
+    parser_init.add_argument('--url', type=str, default='',
+            help='Site deploy URL')
     parser_init.set_defaults(func=jenerator.cmd_init)
+    # Config command
+    parser_config = subparsers.add_parser('config', aliases=['c'],
+            help='Configure site options')
+    parser_config.add_argument('--site', type=str, default='.',
+            help='Path to directory of site to configure')
+    parser_config.add_argument('--set', type=str, default='',
+            help='Set an option, <option>=<value>')
+    parser_config.add_argument('--option', type=str, default='',
+            help='Option to display')
+    parser_config.set_defaults(func=jenerator.cmd_config)
     # Build command
     parser_build = subparsers.add_parser('build', aliases=['b'],
             help='Build a site')
