@@ -1,5 +1,6 @@
 import sys, os, shutil, pkgutil, json
 from jinja2 import Environment, FileSystemLoader
+from django.utils import feedgenerator
 from jenerator.processors import process
 
 
@@ -331,3 +332,17 @@ def cmd_build(opts):
         with open(os.path.join(opts.target,
                 c['link'] + os.path.extsep + 'html'), 'w') as f:
             f.write(content)
+
+    # Generate feeds
+    site_url = config_get(opts, 'site_url')
+    if opts.feeds:
+        atom = feedgenerator.Atom1Feed(config_get(opts, 'site_title'),
+                config_get(opts, 'site_url'), config_get(opts, 'site_desc'),
+                author_email=config_get(opts, 'author_email'),
+                author_name=config_get(opts, 'author_name'))
+        for page in global_context['all_pages']:
+            atom.add_item(page['nice_title'], '{}/{}.html'.format(
+                    site_url, page['link']),
+                    page['html_content'])
+        with open(os.path.join(opts.target, 'index.atom.xml'), 'w') as f:
+            f.write(atom.writeString('utf8'))

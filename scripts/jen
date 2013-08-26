@@ -42,6 +42,8 @@ if __name__ == '__main__':
             help='Delete the build target directory before building')
     parser_build.add_argument('--nostatic', action='store_true', default=False,
             help='Do not require a static files directory')
+    parser_build.add_argument('--feeds', action='store_true', default=False,
+            help='Build RSS and Atom feeds for categories and the index')
     parser_build.set_defaults(func=jenerator.cmd_build)
 
     opts = parser.parse_args(sys.argv[1:])
