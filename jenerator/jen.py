@@ -217,15 +217,15 @@ def cmd_build(opts):
     if opts.nostatic:
         os.makedirs(opts.target)
     else:
-        shutil.copytree(os.path.join(opts.source, STATICDIR), opts.target)
+        shutil.copytree(os.path.join(opts.site, STATICDIR), opts.target)
 
     # Copy the pictures directory
-    shutil.copytree(os.path.join(opts.source, PICSDIR),
+    shutil.copytree(os.path.join(opts.site, PICSDIR),
             os.path.join(opts.target, PICSDIR))
 
     # Create the template environment, pull from template directory
     template_environment = Environment(
-            loader=FileSystemLoader(os.path.join(opts.source, TMPLSDIR)))
+            loader=FileSystemLoader(os.path.join(opts.site, TMPLSDIR)))
 
     # Establish the build queue - stores contexts to be built
     buildq = []
@@ -239,22 +239,22 @@ def cmd_build(opts):
             'all_pages': [] # page contexts
     }
     # Build pages
-    for root, dirs, files in os.walk(os.path.join(opts.source, PAGESDIR)):
+    for root, dirs, files in os.walk(os.path.join(opts.site, PAGESDIR)):
         for name in files:
             context = parse_page(root, name)
             # Add page image to context
-            context['img_path'] = util_image_ext(os.path.join(opts.source,
+            context['img_path'] = util_image_ext(os.path.join(opts.site,
                     PICSDIR, PAGESDIR, context['raw_title'] + os.extsep))
             # Add template path to context
             tmpl_path = os.path.join(PAGESDIR,
                     context['raw_title'] + os.extsep + 'html')
-            if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+            if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
                     tmpl_path)):
                 tmpl_path = PAGETMPL
-            if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+            if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
                     tmpl_path)):
                 tmpl_path = DEFAULTTMPL
-            if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+            if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
                     tmpl_path)):
                 # TODO: Grab default template from /data instead of failing
                 sys.stderr.write('Error: No default template defined\n')
@@ -272,21 +272,21 @@ def cmd_build(opts):
             global_context['all_pages'].append(context)
     # Build category pages
     for category in global_context['all_cat_names']:
-        context = parse_category(os.path.join(opts.source, CATSDIR),
+        context = parse_category(os.path.join(opts.site, CATSDIR),
                 category)
         # Add category image
-        context['img_path'] = util_image_ext(os.path.join(opts.source,
+        context['img_path'] = util_image_ext(os.path.join(opts.site,
                 PICSDIR, CATSDIR, category))
         # Add template
         tmpl_path = os.path.join(CATSDIR,
                 context['raw_title'] + os.extsep + 'html')
-        if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+        if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
                 tmpl_path)):
             tmpl_path = CATTMPL
-        if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+        if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
                 tmpl_path)):
             tmpl_path = DEFAULTTMPL
-        if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+        if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
                 tmpl_path)):
             # TODO: Grab default template from /data instead of failing
             sys.stderr.write('Error: No default template defined\n')
@@ -299,16 +299,16 @@ def cmd_build(opts):
         # Add the category context to the global list
         global_context['categories'].append(context)
     # Build index page
-    context = parse_category(opts.source, 'index')
+    context = parse_category(opts.site, 'index')
     # Add image
-    context['img_path'] = util_image_ext(os.path.join(opts.source,
+    context['img_path'] = util_image_ext(os.path.join(opts.site,
             PICSDIR, 'index'))
     # Add template
     tmpl_path = INDTMPL
-    if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+    if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
             tmpl_path)):
         tmpl_path = DEFAULTTMPL
-    if not os.path.isfile(os.path.join(opts.source, TMPLSDIR,
+    if not os.path.isfile(os.path.join(opts.site, TMPLSDIR,
             tmpl_path)):
         # TODO: Grab default template from /data instead of failing
         sys.stderr.write('Error: No default template defined\n')

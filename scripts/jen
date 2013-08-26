@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Build command
     parser_build = subparsers.add_parser('build', aliases=['b'],
             help='Build a site')
-    parser_build.add_argument('--source', '-s', type=str, default='.',
+    parser_build.add_argument('--site', '-s', type=str, default='.',
             help='Path to site source files')
     parser_build.add_argument('--target', '-t', type=str, default='_build',
             help='Directory to store output files')
